@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="com.ufi_fidelite_jar_0.0.1-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>com.ufi.fidelite.entities.UfUtilisateur</class>
+    <class>com.ufi.fidelite.entities.UfPays</class>
+    <class>com.ufi.fidelite.entities.UfOffre</class>
+    <class>com.ufi.fidelite.entities.UfPointDeVente</class>
+    <class>com.ufi.fidelite.entities.UfCarte</class>
+    <class>com.ufi.fidelite.entities.UfCommercant</class>
+    <class>com.ufi.fidelite.entities.Conversion</class>
+    <class>com.ufi.fidelite.entities.UfTerminal</class>
+    <class>com.ufi.fidelite.entities.UfPrivilege</class>
+    <class>com.ufi.fidelite.entities.UfPalier</class>
+    <class>com.ufi.fidelite.entities.UfVille</class>
+    <class>com.ufi.fidelite.entities.UfClient</class>
+    <class>com.ufi.fidelite.entities.UfRegion</class>
+    <class>com.ufi.fidelite.entities.UfCategorieCarte</class>
+    <class>com.ufi.fidelite.entities.Parametre</class>
+    <class>com.ufi.fidelite.entities.UfRole</class>
+    <class>com.ufi.fidelite.entities.UfTransaction</class>
+    <class>com.ufi.fidelite.entities.UfRapport</class>
+    <class>com.ufi.fidelite.entities.UfPolitiqueEvaluation</class>
+    <class>com.ufi.fidelite.entities.UfTypeOffre</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/ufi_fidelite?zeroDateTimeBehavior=convertToNull"/>
+      <property name="javax.persistence.jdbc.user" value="root"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="Constyk@mga"/>
+    </properties>
+  </persistence-unit>
+</persistence>
