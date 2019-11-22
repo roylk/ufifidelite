@@ -41,9 +41,25 @@ public class AuthentificationServiceImpl implements IAuthentificationService {
     @Override
     public boolean searchExistsUser(String login, String motDePasse) {
         UfUtilisateur user;
-        user = searchUserByLogin(login);
+        System.out.println("utilisateur.........."+login);
+        System.out.println("utilisateur.........."+motDePasse);
+        user = utilisateurRepository.findbyLogin(login);
+        System.out.println("utilisateur.........."+user);
+        
         if (user != null) {
-            return passwordEncoder.encode(motDePasse).equals(user.getMotDePasse());
+            System.out.println("mot de passe.........."+user.getMotDePasse());
+            String cryptMotDePasse=passwordEncoder.encode(motDePasse);
+           System.out.println("mot de passe encodé.........."+cryptMotDePasse);
+            //boolean b=passwordEncoder.encode(motDePasse).equals(user.getMotDePasse());
+//            boolean b=passwordEncoder.matches(motDePasse,user.getMotDePasse());
+//            //return b=passwordEncoder.encode(motDePasse).equals(user.getMotDePasse());
+//             if(b){
+//                 System.out.println(b);
+//                 return true;   
+//             }else{
+//                 return false;
+//             }  
+            return passwordEncoder.matches(motDePasse,user.getMotDePasse());  
         } else {
             return false;
         }
@@ -59,6 +75,12 @@ public class AuthentificationServiceImpl implements IAuthentificationService {
     @Override
     public UfUtilisateur searchUserByLogin(String code) {
         return utilisateurRepository.findbyLogin(code);
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String stringToBcrypt(String input) {
+        return passwordEncoder.encode(input);
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

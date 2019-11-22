@@ -19,6 +19,9 @@ public interface IAuthentificationService {
     
     public UfUtilisateur searchUserByLogin(String code);
     
+    public String stringToBcrypt(String input);
+    
+    
     
         
     
