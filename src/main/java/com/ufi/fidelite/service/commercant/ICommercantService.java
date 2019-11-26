@@ -34,6 +34,7 @@ public interface ICommercantService {
     public Reponse listeTerminal(Pageable pageable);
     
     public List<Conversion> listeConversion();
+    public Reponse listeConversion(Pageable pageable);
     
     public List<UfPolitiqueEvaluation> listePolitiqueEvaluation();
     

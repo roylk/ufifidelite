@@ -342,6 +342,12 @@ public class CommercantServiceImpl implements ICommercantService{
         return terminalRepository.existsById(code);
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public Reponse listeConversion(Pageable pageable) {
+        return new Reponse(1,"liste des conversions", conversionRepository.findAll(pageable));
+       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     
     

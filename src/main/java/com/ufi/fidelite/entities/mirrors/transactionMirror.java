@@ -23,11 +23,12 @@ public class transactionMirror {
     private String commentaire;
     private String carte;
     private String terminal;
+    private boolean statut;
 
     public transactionMirror() {
     }
 
-    public transactionMirror(String transactionId, Date dateTransaction, Double montantInitial, Double montantReduit, Date dateEnregistrement, String commentaire, String carte, String terminal) {
+    public transactionMirror(String transactionId, Date dateTransaction, Double montantInitial, Double montantReduit, Date dateEnregistrement, String commentaire, String carte, String terminal, boolean statut) {
         this.transactionId = transactionId;
         this.dateTransaction = dateTransaction;
         this.montantInitial = montantInitial;
@@ -36,6 +37,7 @@ public class transactionMirror {
         this.commentaire = commentaire;
         this.carte = carte;
         this.terminal = terminal;
+        this.statut= statut;
     }
 
     public String getTransactionId() {
@@ -70,6 +72,12 @@ public class transactionMirror {
         return terminal;
     }
 
+    public boolean isStatut() {
+        return statut;
+    }
+    
+    
+
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
     }
@@ -101,6 +109,12 @@ public class transactionMirror {
     public void setTerminal(String terminal) {
         this.terminal = terminal;
     }
+
+    public void setStatut(boolean statut) {
+        this.statut = statut;
+    }
+    
+    
 
     @Override
     public String toString() {

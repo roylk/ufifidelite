@@ -304,6 +304,7 @@ public class ClientRestController {
              transaction.setDateEnregistrement(transactionM.getDateEnregistrement());
              transaction.setCarte(clientService.searchCarte(transactionM.getCarte()));
              transaction.setTerminal(commercantService.searchTerminal(transactionM.getTerminal()));
+             transaction.setStatut(transactionM.isStatut());
             
             //return  commercantService.saveCommercant(commercant);
            transaction= clientService.saveTransaction(transaction);

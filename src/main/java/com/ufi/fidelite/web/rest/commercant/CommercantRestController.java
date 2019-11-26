@@ -425,6 +425,23 @@ public class CommercantRestController {
 		return commercantService.listePointDeVente();
 	}
         
+          // liste des produits page par page
+	@RequestMapping(value = "/pconversions", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Reponse getAllConversion( @RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "5") int size) {
+             Reponse rep=null; 
+            try{
+               rep=commercantService.listeConversion(new PageRequest(page, size));
+            }catch(Exception e){
+                rep =new Reponse();
+                rep.setStatus(0);
+                rep.setMessage(e.getMessage());
+            }
+            return rep;	
+		//return commercantService.listeTerminal(new PageRequest(page, size));       
+	}
+        
+        
          @RequestMapping(value = "/conversionsR", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Reponse getAllConversions(){
             

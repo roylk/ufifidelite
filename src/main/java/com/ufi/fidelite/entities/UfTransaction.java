@@ -72,11 +72,14 @@ public class UfTransaction implements Serializable {
     @JoinColumn(name = "terminal", referencedColumnName = "code", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private UfTerminal terminal;
+    
+    @Column(columnDefinition="tinyint(1) default 0",nullable =false)
+    private boolean statut;
 
     public UfTransaction() {
     }
 
-    public UfTransaction(String transactionId, Date dateTransaction, Double montantInitial, Double montantReduit, Date dateEnregistrement, String commentaire, UfCarte carte, UfTerminal terminal) {
+    public UfTransaction(String transactionId, Date dateTransaction, Double montantInitial, Double montantReduit, Date dateEnregistrement, String commentaire, UfCarte carte, UfTerminal terminal, boolean statut) {
         this.transactionId = transactionId;
         this.dateTransaction = dateTransaction;
         this.montantInitial = montantInitial;
@@ -85,6 +88,7 @@ public class UfTransaction implements Serializable {
         this.commentaire = commentaire;
         this.carte = carte;
         this.terminal = terminal;
+        this.statut= statut;
     }
     
     
@@ -161,6 +165,16 @@ public class UfTransaction implements Serializable {
     public void setTerminal(UfTerminal terminal) {
         this.terminal = terminal;
     }
+    
+    public boolean getStatut(){
+        return statut;
+    }
+
+    public void setStatut(boolean statut) {
+        this.statut = statut;
+    }
+    
+    
 
     @Override
     public int hashCode() {

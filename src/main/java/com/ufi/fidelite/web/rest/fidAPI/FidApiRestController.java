@@ -78,7 +78,7 @@ public class FidApiRestController {
         return new RepConsultation(config, montant, montantReduit);
     }
 
-    /*     @RequestMapping(value = "/infoTransactionAPI", method = RequestMethod.GET)
+      @RequestMapping(value = "/infoTransactionAPI", method = RequestMethod.GET)
       Reponse infoTransaction(String transactionId, @RequestParam(name="carte")String carte, @RequestParam(name="terminal") String terminal, double montantInitial, double montantReduit, Date dateTransaction, Date dateEnregistrement){
           
           UfTransaction trx = new UfTransaction();
@@ -90,6 +90,7 @@ public class FidApiRestController {
           trx.setCarte(clientService.searchCarte(carte));
           trx.setTerminal(commercantService.searchTerminal(terminal));
           trx.setCommentaire("transaction réussie à " +dateEnregistrement );
+          trx.setStatut(false);
          //System.out.println("......."+clientService.searchTransaction(transactionId));
          boolean exists=clientService.searchExistTrx(transactionId);
           
@@ -104,8 +105,8 @@ public class FidApiRestController {
 		    
       }
         
-   }*/
-    @RequestMapping(value = "/infoTransactionAPI", method = RequestMethod.GET)
+   }
+   /* @RequestMapping(value = "/infoTransactionAPI", method = RequestMethod.GET)
     Reponse infoTransaction(String transactionId, @RequestParam(name = "carte") String carte, @RequestParam(name = "terminal") String terminal, double montantInitial, double montantReduit, Date dateTransaction, Date dateEnregistrement, String hash, String login, String motDePasse) {
         UfTerminal term = commercantService.searchTerminal(terminal);
         UfCommercant comFromTerm = term.getPointDeVente().getCommercantCode();
@@ -130,6 +131,7 @@ public class FidApiRestController {
                     trx.setCarte(clientService.searchCarte(carte));
                     trx.setTerminal(commercantService.searchTerminal(terminal));
                     trx.setCommentaire("transaction réussie à " + dateEnregistrement);
+                    trx.setStatut(false);
                     //System.out.println("......."+clientService.searchTransaction(transactionId));
 
                     boolean exists = clientService.searchExistTrx(transactionId);
@@ -151,7 +153,7 @@ public class FidApiRestController {
         } else {
             return new Reponse(3, "erreur correspondance terminal/commercant", null);
         }
-    }
+    }*/
 
     @RequestMapping(value = "/infoAuthentificationAPI", method = RequestMethod.GET)
     Reponse infoAuthentification(String terminal, String login, String motDePasse) {
