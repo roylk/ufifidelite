@@ -12,20 +12,38 @@ import java.io.Serializable;
  * @author R. KOUANI
  */
 public class RepConsultation  implements Serializable{
-   
+    
+    private int statut;
+    private String message;
     private Object securite;
     private double montantInitial;
     private double montantReduit;
 
-    public RepConsultation( Object securite, double montantInitial, double montantReduit) {
-        
+    public RepConsultation( int statut, String message, Object securite, double montantInitial, double montantReduit) {
+        this.statut=statut;
+        this.message=message;
         this.securite = securite;
         this.montantInitial = montantInitial;
         this.montantReduit = montantReduit;
     }
 
-   
+    public int getStatut() {
+        return statut;
+    }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setStatut(int statut) {
+        this.statut = statut;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+    
+    
     public Object getSecurite() {
         return securite;
     }

@@ -61,8 +61,9 @@ public class FidApiRestController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @RequestMapping(value = "/consultationAPI", method = RequestMethod.GET)
+    
+    //Version 1
+   /* @RequestMapping(value = "/consultationAPI", method = RequestMethod.GET)
     public RepConsultation consultation(@RequestParam(name = "carte") String carte, @RequestParam(name = "terminal") String terminal, double montant) {
         UfCommercant commercant;
         double reduction = 0;
@@ -76,9 +77,32 @@ public class FidApiRestController {
         commercant = t.getPointDeVente().getCommercantCode();
         config = commercant.getConfig();
         return new RepConsultation(config, montant, montantReduit);
+    }*/
+    
+    //Version 2
+    @RequestMapping(value = "/consultationAPI", method = RequestMethod.GET)
+    public RepConsultation consultation(@RequestParam(name = "carte") String carte, @RequestParam(name = "terminal") String terminal, double montant) {
+        UfCommercant commercant;
+        double reduction = 0;
+        double montantReduit;
+        UfTerminal t;
+        Object config;
+        UfCarte c;
+        
+        t = commercantService.searchTerminal(terminal);
+        commercant = t.getPointDeVente().getCommercantCode();
+        c = clientService.searchCarte(carte);
+        if(c!=null&&c.getStatut()!=1&& commercant!=null&& commercant.getCode().equals(c.getCategorieCarte().getCommercant().getCode()) ){
+           config = commercant.getConfig();
+           montantReduit = montant - reduction;
+           return new RepConsultation(1, "success",config, montant, montantReduit);
+        }else{
+            return new RepConsultation(0,"Erreur un ou plusieurs paramètres absents", null,0, 0);
+        }
+        
     }
-
-      @RequestMapping(value = "/infoTransactionAPI", method = RequestMethod.GET)
+        //version 1
+      /*@RequestMapping(value = "/infoTransactionAPI", method = RequestMethod.GET)
       Reponse infoTransaction(String transactionId, @RequestParam(name="carte")String carte, @RequestParam(name="terminal") String terminal, double montantInitial, double montantReduit, Date dateTransaction, Date dateEnregistrement){
           
           UfTransaction trx = new UfTransaction();
@@ -89,8 +113,9 @@ public class FidApiRestController {
           trx.setDateEnregistrement(dateEnregistrement);
           trx.setCarte(clientService.searchCarte(carte));
           trx.setTerminal(commercantService.searchTerminal(terminal));
-          trx.setCommentaire("transaction réussie à " +dateEnregistrement );
           trx.setStatut(false);
+          trx.setCommentaire("transaction réussie à " +dateEnregistrement );
+          
          //System.out.println("......."+clientService.searchTransaction(transactionId));
          boolean exists=clientService.searchExistTrx(transactionId);
           
@@ -105,8 +130,10 @@ public class FidApiRestController {
 		    
       }
         
-   }
-   /* @RequestMapping(value = "/infoTransactionAPI", method = RequestMethod.GET)
+   }*/
+      
+      //version 2
+    @RequestMapping(value = "/infoTransactionAPI", method = RequestMethod.GET)
     Reponse infoTransaction(String transactionId, @RequestParam(name = "carte") String carte, @RequestParam(name = "terminal") String terminal, double montantInitial, double montantReduit, Date dateTransaction, Date dateEnregistrement, String hash, String login, String motDePasse) {
         UfTerminal term = commercantService.searchTerminal(terminal);
         UfCommercant comFromTerm = term.getPointDeVente().getCommercantCode();
@@ -153,7 +180,7 @@ public class FidApiRestController {
         } else {
             return new Reponse(3, "erreur correspondance terminal/commercant", null);
         }
-    }*/
+    }
 
     @RequestMapping(value = "/infoAuthentificationAPI", method = RequestMethod.GET)
     Reponse infoAuthentification(String terminal, String login, String motDePasse) {
