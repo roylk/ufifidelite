@@ -16,6 +16,7 @@ import com.ufi.fidelite.entities.UfTransaction;
 import com.ufi.fidelite.entities.mirrors.CarteMirror;
 import com.ufi.fidelite.entities.mirrors.ClientMirror;
 import com.ufi.fidelite.entities.mirrors.CommercantMirror;
+import com.ufi.fidelite.entities.mirrors.SecureTransactionMirror;
 import com.ufi.fidelite.entities.mirrors.TerminalMirror;
 import com.ufi.fidelite.entities.mirrors.transactionMirror;
 import com.ufi.fidelite.service.authentification.IAuthentificationService;
@@ -133,38 +134,38 @@ public class FidApiRestController {
    }*/
       
       //version 2
-    @RequestMapping(value = "/infoTransactionAPI", method = RequestMethod.GET)
-    Reponse infoTransaction(String transactionId, @RequestParam(name = "carte") String carte, @RequestParam(name = "terminal") String terminal, double montantInitial, double montantReduit, Date dateTransaction, Date dateEnregistrement, String hash, String login, String motDePasse) {
-        UfTerminal term = commercantService.searchTerminal(terminal);
+    @RequestMapping(value = "/infoTransactionAPI", method = RequestMethod.POST)
+    Reponse infoTransaction(@RequestBody SecureTransactionMirror secureTrx ) {
+        UfTerminal term = commercantService.searchTerminal(secureTrx.getTerminal());
         UfCommercant comFromTerm = term.getPointDeVente().getCommercantCode();
-        UfCommercant comFromUser = authentificationService.searchUserByLogin(login).getCommercant();
-        String input = transactionId + carte + terminal + montantInitial + montantReduit + "UFI_FIDELITE";
+        UfCommercant comFromUser = authentificationService.searchUserByLogin(secureTrx.getLogin()).getCommercant();
+        String input = secureTrx.getTransactionId() + secureTrx.getCarte() + secureTrx.getTerminal() + secureTrx.getMontantInitial() + secureTrx.getMontantReduit() + "UFI_FIDELITE";
         String hashRep = Utils.sha1(input);
-        if (comFromTerm.equals(comFromUser)) {
-            boolean existsAuth = authentificationService.searchExistsUser(login, motDePasse);
+        if (comFromTerm.getCode().equals(comFromUser.getCode())) {
+            boolean existsAuth = authentificationService.searchExistsUser(secureTrx.getLogin(), secureTrx.getMotDePasse());
             if (!existsAuth) {
                 return new Reponse(5, "erreur d'authentification", null);
             } else {
-                boolean integrity = hash.equals(hashRep);
+                boolean integrity = secureTrx.getHash().equals(hashRep);
                 if (!integrity) {
                     return new Reponse(4, "données reçues douteuses", null);
                 } else {
                     UfTransaction trx = new UfTransaction();
-                    trx.setTransactionId(transactionId);
-                    trx.setDateTransaction(dateTransaction);
-                    trx.setMontantInitial(montantInitial);
-                    trx.setMontantReduit(montantReduit);
-                    trx.setDateEnregistrement(dateEnregistrement);
-                    trx.setCarte(clientService.searchCarte(carte));
-                    trx.setTerminal(commercantService.searchTerminal(terminal));
-                    trx.setCommentaire("transaction réussie à " + dateEnregistrement);
+                    trx.setTransactionId(secureTrx.getTransactionId());
+                    trx.setDateTransaction(secureTrx.getDateTransaction());
+                    trx.setMontantInitial(secureTrx.getMontantInitial());
+                    trx.setMontantReduit(secureTrx.getMontantReduit());
+                    trx.setDateEnregistrement(secureTrx.getDateEnregistrement());
+                    trx.setCarte(clientService.searchCarte(secureTrx.getCarte()));
+                    trx.setTerminal(commercantService.searchTerminal(secureTrx.getTerminal()));
+                    trx.setCommentaire("transaction réussie à " + secureTrx.getDateEnregistrement());
                     trx.setStatut(false);
                     //System.out.println("......."+clientService.searchTransaction(transactionId));
 
-                    boolean exists = clientService.searchExistTrx(transactionId);
+                    boolean exists = clientService.searchExistTrx(secureTrx.getTransactionId());
 
                     if (exists) {
-                        return new Reponse(2, "la transaction existe déjà", clientService.searchTransaction(transactionId));
+                        return new Reponse(2, "la transaction existe déjà", clientService.searchTransaction(secureTrx.getTransactionId()));
                     } else {
                         trx = clientService.saveTransaction(trx);
                         if (trx != null) {
@@ -187,7 +188,9 @@ public class FidApiRestController {
         UfTerminal term = commercantService.searchTerminal(terminal);
         UfCommercant comFromTerm = term.getPointDeVente().getCommercantCode();
         UfCommercant comFromUser = authentificationService.searchUserByLogin(login).getCommercant();
-        if (comFromTerm.equals(comFromUser)) {
+        System.out.println("commercant1..........."+comFromTerm.getCode());
+        System.out.println("commercant2..........."+comFromUser.getCode());
+        if (comFromTerm.getCode().equals(comFromUser.getCode())) {
             boolean exists = authentificationService.searchExistsUser(login, motDePasse);
             if (exists) {
                 return new Reponse(1, "auth réussie", terminal);
