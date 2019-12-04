@@ -5,6 +5,8 @@
  */
 package com.ufi.fidelite.entities.mirrors;
 
+import com.ufi.fidelite.config.Constantes;
+import com.ufi.fidelite.config.ReponseRest;
 import java.util.Date;
 
 /**
@@ -126,7 +128,67 @@ public class SecureTransactionMirror {
     }
     
     
-    
+   public ReponseRest checkInput(){
+        ReponseRest repRest = new ReponseRest();
+        if(this.getTransactionId().isEmpty() || this.getTransactionId() == null){
+            repRest.setCode(Constantes.CODE_TRANSACTION_ID_NOT_SET);
+            repRest.setMessage("Transaction ID not set or is empty");
+            repRest.setStatut(false);
+            repRest.setData(null);
+            return repRest;
+        }else if (this.getDateTransaction()==null||this.getDateEnregistrement()==null){
+            repRest.setCode(Constantes.CODE_TRANSACTION_DATE_ERROR);
+            repRest.setMessage("Transaction Dates  not set or is empty");
+            repRest.setStatut(false);
+            repRest.setData(null);
+            return repRest;
+        }else if(this.getCarte().isEmpty()||this.getCarte()==null){
+            repRest.setCode(Constantes.CODE_CARTE_NOT_SET);
+            repRest.setMessage("Carte not set or is empty");
+            repRest.setStatut(false);
+            repRest.setData(null);
+            return repRest;
+            
+        }else if(this.getTerminal().isEmpty()||this.getTerminal()==null){
+            repRest.setCode(Constantes.CODE_TERMINAL_NOT_SET);
+            repRest.setMessage(" Terminal not set or is empty");
+            repRest.setStatut(false);
+            repRest.setData(null);
+            return repRest;
+            
+        }else if (this.getMontantInitial().isNaN()||this.getMontantInitial()==null||this.getMontantReduit().isNaN()||this.getMontantReduit()==null){
+            repRest.setCode(Constantes.CODE_MONTANT_ERROR);
+            repRest.setMessage(" Montant not set, is empty or not valid");
+            repRest.setStatut(false);
+            repRest.setData(null);
+            return repRest;
+            
+        }else if(this.getLogin().isEmpty()||this.getLogin()==null ||this.getMotDePasse().isEmpty()||this.getMotDePasse()==null){
+          repRest.setCode(Constantes.CODE_LOGIN_OR_PASSWORD_NOT_SET);
+            repRest.setMessage("login or password  not set or is empty");
+            repRest.setStatut(false);
+            repRest.setData(null);
+            return repRest;
+            
+        }else if(this.getHash().isEmpty()||this.getHash()==null){
+          repRest.setCode(Constantes.CODE_HASH_NOT_SET);
+            repRest.setMessage("login or password  not set or is empty");
+            repRest.setStatut(false);
+            repRest.setData(null);
+            return repRest;   
+        }else{
+            repRest.setCode(Constantes.CODE_SUCCES);
+            repRest.setMessage("success");
+            repRest.setStatut(true);
+            repRest.setData(null);
+            return repRest;
+        }  
+            
+        
+        
+        
+    }
+      
     
     
     

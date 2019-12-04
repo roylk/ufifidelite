@@ -183,8 +183,12 @@ public class CommercantServiceImpl implements ICommercantService{
 
     @Override
     public UfTerminal searchTerminal(String code) {
-        return terminalRepository.getOne(code);
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(code.isEmpty()){
+            throw new UnsupportedOperationException("le code est null"); //To change body of generated methods, choose Tools | Templates.
+        }
+        else
+            return terminalRepository.findbyId(code);
+        //throw new UnsupportedOperationException("le code est null"); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

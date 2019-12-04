@@ -5,6 +5,8 @@
  */
 package com.ufi.fidelite.web.rest.fidAPI;
 
+import com.ufi.fidelite.config.Constantes;
+import com.ufi.fidelite.config.ReponseRest;
 import com.ufi.fidelite.config.Utils;
 import com.ufi.fidelite.dao.RepConsultation;
 import com.ufi.fidelite.dao.Reponse;
@@ -89,19 +91,33 @@ public class FidApiRestController {
         UfTerminal t;
         Object config;
         UfCarte c;
+        if(terminal.isEmpty()){
+            return new RepConsultation(Constantes.CODE_TERMINAL_NOT_SET, false, "code terminal pas défini", null, 0,0);}
+        else {
+             t = commercantService.searchTerminal(terminal);
+          if(t==null){
+                 return new RepConsultation(Constantes.CODE_TERMINAL_NOT_SET, false,"terminal inexistant", null, 0,0);
+           }else{
+             commercant = t.getPointDeVente().getCommercantCode();
+             if(carte.isEmpty())
+                 return new RepConsultation(Constantes.CODE_CARTE_NOT_SET, false, "code carte non défini", null, 0, 0);
+             else{
+                c = clientService.searchCarte(carte);}
+            if(c==null||c.getStatut()==1){
+                return new RepConsultation(Constantes.CODE_CARTE_ABSENT_OR_NOT_ALLOCATED, false, "carte absente ou non encore allouée", null, 0,0);
+            }else if(commercant==null){
+                return new RepConsultation(Constantes.CODE_MERCHANT_ABSENT_OR_NOT_ACTIVE, false, "commercant absent ou pas actif", null,0,0);
+            }else if(!(commercant.getCode().equals(c.getCategorieCarte().getCommercant().getCode()))){
+                return new RepConsultation(Constantes.CODE_MERCHANT_CARTE_MATCH_ERROR, false,"Erreur correspondance, carte/commercant", null,0,0 );
+            }else {
+                config = commercant.getConfig();
+                montantReduit = montant - reduction;
+                return new RepConsultation(Constantes.CODE_SUCCES, true, "success",config, montant, montantReduit);}   
+            }
         
-        t = commercantService.searchTerminal(terminal);
-        commercant = t.getPointDeVente().getCommercantCode();
-        c = clientService.searchCarte(carte);
-        if(c!=null&&c.getStatut()!=1&& commercant!=null&& commercant.getCode().equals(c.getCategorieCarte().getCommercant().getCode()) ){
-           config = commercant.getConfig();
-           montantReduit = montant - reduction;
-           return new RepConsultation(1, "success",config, montant, montantReduit);
-        }else{
-            return new RepConsultation(0,"Erreur un ou plusieurs paramètres absents", null,0, 0);
         }
-        
     }
+    
         //version 1
       /*@RequestMapping(value = "/infoTransactionAPI", method = RequestMethod.GET)
       Reponse infoTransaction(String transactionId, @RequestParam(name="carte")String carte, @RequestParam(name="terminal") String terminal, double montantInitial, double montantReduit, Date dateTransaction, Date dateEnregistrement){
@@ -135,7 +151,9 @@ public class FidApiRestController {
       
       //version 2
     @RequestMapping(value = "/infoTransactionAPI", method = RequestMethod.POST)
-    Reponse infoTransaction(@RequestBody SecureTransactionMirror secureTrx ) {
+    ReponseRest infoTransaction(@RequestBody SecureTransactionMirror secureTrx ) {
+        ReponseRest repRest = secureTrx.checkInput();
+        if(repRest.isStatut()) {
         UfTerminal term = commercantService.searchTerminal(secureTrx.getTerminal());
         UfCommercant comFromTerm = term.getPointDeVente().getCommercantCode();
         UfCommercant comFromUser = authentificationService.searchUserByLogin(secureTrx.getLogin()).getCommercant();
@@ -144,11 +162,11 @@ public class FidApiRestController {
         if (comFromTerm.getCode().equals(comFromUser.getCode())) {
             boolean existsAuth = authentificationService.searchExistsUser(secureTrx.getLogin(), secureTrx.getMotDePasse());
             if (!existsAuth) {
-                return new Reponse(5, "erreur d'authentification", null);
+                return new ReponseRest(Constantes.CODE_AUTHENTIFICATION_ERROR, false, "erreur d'authentification", null);
             } else {
                 boolean integrity = secureTrx.getHash().equals(hashRep);
                 if (!integrity) {
-                    return new Reponse(4, "données reçues douteuses", null);
+                    return new ReponseRest(Constantes.CODE_DATA_INTEGRITY_ERROR, false,  "données reçues douteuses", null);
                 } else {
                     UfTransaction trx = new UfTransaction();
                     trx.setTransactionId(secureTrx.getTransactionId());
@@ -165,13 +183,13 @@ public class FidApiRestController {
                     boolean exists = clientService.searchExistTrx(secureTrx.getTransactionId());
 
                     if (exists) {
-                        return new Reponse(2, "la transaction existe déjà", clientService.searchTransaction(secureTrx.getTransactionId()));
+                        return new ReponseRest(Constantes.CODE_IDENTIC_ENTITY, false, "la transaction existe déjà", clientService.searchTransaction(secureTrx.getTransactionId()));
                     } else {
                         trx = clientService.saveTransaction(trx);
                         if (trx != null) {
-                            return new Reponse(1, "Enregistré avec succes", trx);
+                            return new ReponseRest(Constantes.CODE_SUCCES,true, "Enregistré avec succes", trx);
                         } else {
-                            return new Reponse(0, "Une erreur s'est produite pendant l'enregistrement", null);
+                            return new ReponseRest(Constantes.CODE_ERREUR_INITIALISATION, false, "Une erreur s'est produite pendant l'enregistrement", null);
                         }
                     }
                 }
@@ -179,28 +197,46 @@ public class FidApiRestController {
             }
             //return new Reponse (3, "erreur correspondance terminal/commercant",null);
         } else {
-            return new Reponse(3, "erreur correspondance terminal/commercant", null);
+            return new ReponseRest(Constantes.CODE_MERCHAND_TERMINAL_MATCH_ERROR,false, "erreur correspondance terminal/commercant", null);
+        }
+     }else{
+            return repRest;
+        
         }
     }
+    
 
     @RequestMapping(value = "/infoAuthentificationAPI", method = RequestMethod.GET)
-    Reponse infoAuthentification(String terminal, String login, String motDePasse) {
-        UfTerminal term = commercantService.searchTerminal(terminal);
-        UfCommercant comFromTerm = term.getPointDeVente().getCommercantCode();
-        UfCommercant comFromUser = authentificationService.searchUserByLogin(login).getCommercant();
-        System.out.println("commercant1..........."+comFromTerm.getCode());
-        System.out.println("commercant2..........."+comFromUser.getCode());
-        if (comFromTerm.getCode().equals(comFromUser.getCode())) {
-            boolean exists = authentificationService.searchExistsUser(login, motDePasse);
-            if (exists) {
-                return new Reponse(1, "auth réussie", terminal);
-            } else {
-                return new Reponse(0, "echec auth", null);
+    ReponseRest infoAuthentification(String terminal, String login, String motDePasse) {
+       if(terminal.isEmpty()){
+           return new ReponseRest(Constantes.CODE_TERMINAL_NOT_SET, false, "code terminal non defini", null);
+       }
+       else{
+            UfTerminal term = commercantService.searchTerminal(terminal);
+            if(term==null){
+                return new ReponseRest(Constantes.CODE_TERMINAL_NOT_SET, false, "terminal non défini ou inexistant", null);
+            }else{
+                UfCommercant comFromTerm = term.getPointDeVente().getCommercantCode();
+                 if(login.isEmpty()||motDePasse.isEmpty()){
+                     return new ReponseRest(Constantes.CODE_LOGIN_OR_PASSWORD_NOT_SET, false, "login et/ou motDePasse non défini(s)", null);
+                 }else{
+                     UfCommercant comFromUser = authentificationService.searchUserByLogin(login).getCommercant();
+                     if (comFromTerm.getCode().equals(comFromUser.getCode())) {
+                            boolean exists = authentificationService.searchExistsUser(login, motDePasse);
+                            if (exists) {
+                                 return new ReponseRest(Constantes.CODE_SUCCES,true, "auth réussie", terminal);
+                            } else {
+                             return new ReponseRest(Constantes.CODE_AUTHENTIFICATION_ERROR, false, "echec auth", null);
+                             }
+                      } else {
+                         return new ReponseRest(Constantes.CODE_MERCHAND_TERMINAL_MATCH_ERROR, false, "erreur de correspondance terminal", null);
+                    }
+                 }
+                     
+             }
+                
             }
-        } else {
-            return new Reponse(2, "erreur de correspondance terminal", null);
-        }
-
+        
     }
 
     public FidApiRestController() {

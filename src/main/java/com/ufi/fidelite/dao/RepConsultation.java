@@ -13,30 +13,44 @@ import java.io.Serializable;
  */
 public class RepConsultation  implements Serializable{
     
-    private int statut;
+    private int code;
+    private boolean statut;
     private String message;
     private Object securite;
     private double montantInitial;
     private double montantReduit;
 
-    public RepConsultation( int statut, String message, Object securite, double montantInitial, double montantReduit) {
+    public RepConsultation( int code, boolean statut, String message, Object securite, double montantInitial, double montantReduit) {
+        this.code=code;
         this.statut=statut;
         this.message=message;
         this.securite = securite;
         this.montantInitial = montantInitial;
         this.montantReduit = montantReduit;
     }
+    
+   
 
-    public int getStatut() {
-        return statut;
+    public int codeStatut() {
+        return code;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public void setStatut(int statut) {
+    public boolean isStatut() {
+        return statut;
+    }
+
+    public void setStatut(boolean statut) {
         this.statut = statut;
+    }
+    
+    
+
+    public void setCode(int code) {
+        this.code = code;
     }
 
     public void setMessage(String message) {
@@ -71,9 +85,13 @@ public class RepConsultation  implements Serializable{
     }
     
     
+        
+    }
     
     
     
     
     
-}
+    
+    
+
