@@ -27,6 +27,7 @@ public class Constantes {
     public static int CODE_CARTE_ABSENT_OR_NOT_ALLOCATED=312;
     public static int CODE_MERCHANT_ABSENT_OR_NOT_ACTIVE=313;
     public static int CODE_MERCHANT_CARTE_MATCH_ERROR=314;
+    public static int CODE_USER_LOGIN_ABSENT=315;
 }
 
     

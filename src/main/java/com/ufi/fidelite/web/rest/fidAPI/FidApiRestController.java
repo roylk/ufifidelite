@@ -15,6 +15,7 @@ import com.ufi.fidelite.entities.UfClient;
 import com.ufi.fidelite.entities.UfCommercant;
 import com.ufi.fidelite.entities.UfTerminal;
 import com.ufi.fidelite.entities.UfTransaction;
+import com.ufi.fidelite.entities.UfUtilisateur;
 import com.ufi.fidelite.entities.mirrors.CarteMirror;
 import com.ufi.fidelite.entities.mirrors.ClientMirror;
 import com.ufi.fidelite.entities.mirrors.CommercantMirror;
@@ -84,10 +85,10 @@ public class FidApiRestController {
     
     //Version 2
     @RequestMapping(value = "/consultationAPI", method = RequestMethod.GET)
-    public RepConsultation consultation(@RequestParam(name = "carte") String carte, @RequestParam(name = "terminal") String terminal, double montant) {
+    public RepConsultation consultation(@RequestParam(name = "carte") String carte, @RequestParam(name = "terminal") String terminal, Double montant) {
         UfCommercant commercant;
-        double reduction = 0;
-        double montantReduit;
+        Double reduction = 0.0;
+        Double montantReduit;
         UfTerminal t;
         Object config;
         UfCarte c;
@@ -109,7 +110,10 @@ public class FidApiRestController {
                 return new RepConsultation(Constantes.CODE_MERCHANT_ABSENT_OR_NOT_ACTIVE, false, "commercant absent ou pas actif", null,0,0);
             }else if(!(commercant.getCode().equals(c.getCategorieCarte().getCommercant().getCode()))){
                 return new RepConsultation(Constantes.CODE_MERCHANT_CARTE_MATCH_ERROR, false,"Erreur correspondance, carte/commercant", null,0,0 );
-            }else {
+            }else if(montant.isNaN() ){
+                return new RepConsultation(Constantes.CODE_MONTANT_ERROR,false, "Montant null ou invalide", null, 0,0);    
+            }
+             else {
                 config = commercant.getConfig();
                 montantReduit = montant - reduction;
                 return new RepConsultation(Constantes.CODE_SUCCES, true, "success",config, montant, montantReduit);}   
@@ -154,28 +158,57 @@ public class FidApiRestController {
     ReponseRest infoTransaction(@RequestBody SecureTransactionMirror secureTrx ) {
         ReponseRest repRest = secureTrx.checkInput();
         if(repRest.isStatut()) {
-        UfTerminal term = commercantService.searchTerminal(secureTrx.getTerminal());
-        UfCommercant comFromTerm = term.getPointDeVente().getCommercantCode();
-        UfCommercant comFromUser = authentificationService.searchUserByLogin(secureTrx.getLogin()).getCommercant();
-        String input = secureTrx.getTransactionId() + secureTrx.getCarte() + secureTrx.getTerminal() + secureTrx.getMontantInitial() + secureTrx.getMontantReduit() + "UFI_FIDELITE";
-        String hashRep = Utils.sha1(input);
-        if (comFromTerm.getCode().equals(comFromUser.getCode())) {
-            boolean existsAuth = authentificationService.searchExistsUser(secureTrx.getLogin(), secureTrx.getMotDePasse());
-            if (!existsAuth) {
-                return new ReponseRest(Constantes.CODE_AUTHENTIFICATION_ERROR, false, "erreur d'authentification", null);
-            } else {
-                boolean integrity = secureTrx.getHash().equals(hashRep);
-                if (!integrity) {
-                    return new ReponseRest(Constantes.CODE_DATA_INTEGRITY_ERROR, false,  "données reçues douteuses", null);
+                UfTerminal term = commercantService.searchTerminal(secureTrx.getTerminal());
+             if (term==null){
+                 return new ReponseRest(Constantes.CODE_TERMINAL_NOT_SET, false, "terminal non défini ou inexistant", null);
+             }else {
+                UfCommercant comFromTerm = term.getPointDeVente().getCommercantCode();
+                UfUtilisateur user=authentificationService.searchUserByLogin(secureTrx.getLogin());
+            if(user==null){
+                return new ReponseRest(Constantes.CODE_USER_LOGIN_ABSENT, false, "utilisateur avec le login:"+secureTrx.getLogin()+", n'existe pas", null);
+
+            }else{
+             //UfCommercant comFromUser = authentificationService.searchUserByLogin(secureTrx.getLogin()).getCommercant();
+              UfCommercant comFromUser = user.getCommercant();
+              String input = secureTrx.getTransactionId() + secureTrx.getCarte() + secureTrx.getTerminal() + secureTrx.getMontantInitial() + secureTrx.getMontantReduit() + "UFI_FIDELITE";
+              String hashRep = Utils.sha1(input);
+              if (comFromTerm.getCode().equals(comFromUser.getCode())) {
+                 UfCarte c=clientService.searchCarte(secureTrx.getCarte());
+                 boolean existsAuth = authentificationService.searchExistsUser(secureTrx.getLogin(), secureTrx.getMotDePasse());
+                if (!existsAuth) {
+                    return new ReponseRest(Constantes.CODE_AUTHENTIFICATION_ERROR, false, "erreur d'authentification", null);
                 } else {
+                    boolean integrity = secureTrx.getHash().equals(hashRep);
+                  if (!integrity) {
+                    return new ReponseRest(Constantes.CODE_DATA_INTEGRITY_ERROR, false,  "données reçues douteuses", null);
+                  } else {
                     UfTransaction trx = new UfTransaction();
                     trx.setTransactionId(secureTrx.getTransactionId());
                     trx.setDateTransaction(secureTrx.getDateTransaction());
-                    trx.setMontantInitial(secureTrx.getMontantInitial());
-                    trx.setMontantReduit(secureTrx.getMontantReduit());
+                    /*boolean numeric=true;
+                    try{
+                        Double num=Double.parseDouble(secureTrx.getMontantInitial());
+                    }
+                    catch(NumberFormatException e) {
+                        numeric=false;
+                        
+                    }
+                    if(!numeric){
+                        return new ReponseRest(Constantes.CODE_MONTANT_ERROR, false, "le montant n'est pas valide", null);
+                    }else{}*/
+                            
+                    trx.setMontantInitial(Double.parseDouble(secureTrx.getMontantInitial()));
+                    trx.setMontantReduit(Double.parseDouble(secureTrx.getMontantReduit()));
                     trx.setDateEnregistrement(secureTrx.getDateEnregistrement());
-                    trx.setCarte(clientService.searchCarte(secureTrx.getCarte()));
-                    trx.setTerminal(commercantService.searchTerminal(secureTrx.getTerminal()));
+                    if(c==null||c.getStatut()==1){
+                    return new ReponseRest(Constantes.CODE_CARTE_ABSENT_OR_NOT_ALLOCATED, false, "carte absente ou non encore allouée", null);
+                    }else if(!(comFromTerm.getCode().equals(c.getCategorieCarte().getCommercant().getCode()))){
+                    return new ReponseRest(Constantes.CODE_MERCHANT_CARTE_MATCH_ERROR, false,"Erreur correspondance, carte/commercant", null );
+                    }else{
+                    //trx.setCarte(clientService.searchCarte(secureTrx.getCarte()));
+                    trx.setCarte(c);}
+                    //trx.setTerminal(commercantService.searchTerminal(secureTrx.getTerminal()));
+                    trx.setTerminal(term);
                     trx.setCommentaire("transaction réussie à " + secureTrx.getDateEnregistrement());
                     trx.setStatut(false);
                     //System.out.println("......."+clientService.searchTransaction(transactionId));
@@ -192,17 +225,20 @@ public class FidApiRestController {
                             return new ReponseRest(Constantes.CODE_ERREUR_INITIALISATION, false, "Une erreur s'est produite pendant l'enregistrement", null);
                         }
                     }
-                }
+                
+                  }
 
             }
             //return new Reponse (3, "erreur correspondance terminal/commercant",null);
         } else {
             return new ReponseRest(Constantes.CODE_MERCHAND_TERMINAL_MATCH_ERROR,false, "erreur correspondance terminal/commercant", null);
         }
+            }
+         }
      }else{
             return repRest;
-        
         }
+
     }
     
 

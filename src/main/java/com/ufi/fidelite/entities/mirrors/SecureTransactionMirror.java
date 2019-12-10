@@ -16,8 +16,10 @@ import java.util.Date;
 public class SecureTransactionMirror {
     private String transactionId;
     private Date dateTransaction;
-    private Double montantInitial;
-    private Double montantReduit;
+    //private Double montantInitial;
+    private String montantInitial;
+    //private Double montantReduit;
+    private String montantReduit;
     private Date dateEnregistrement;
     private String carte;
     private String terminal;
@@ -29,7 +31,7 @@ public class SecureTransactionMirror {
         super();
     }
 
-    public SecureTransactionMirror(String transactionId, Date dateTransaction, Double montantInitial, Double montantReduit, Date dateEnregistrement, String carte, String terminal, String hash, String login, String motDePasse) {
+    public SecureTransactionMirror(String transactionId, Date dateTransaction, String montantInitial, String montantReduit, Date dateEnregistrement, String carte, String terminal, String hash, String login, String motDePasse) {
         this.transactionId = transactionId;
         this.dateTransaction = dateTransaction;
         this.montantInitial = montantInitial;
@@ -50,11 +52,11 @@ public class SecureTransactionMirror {
         return dateTransaction;
     }
 
-    public Double getMontantInitial() {
+    public String getMontantInitial() {
         return montantInitial;
     }
 
-    public Double getMontantReduit() {
+    public String getMontantReduit() {
         return montantReduit;
     }
 
@@ -90,11 +92,11 @@ public class SecureTransactionMirror {
         this.dateTransaction = dateTransaction;
     }
 
-    public void setMontantInitial(Double montantInitial) {
+    public void setMontantInitial(String montantInitial) {
         this.montantInitial = montantInitial;
     }
 
-    public void setMontantReduit(Double montantReduit) {
+    public void setMontantReduit(String montantReduit) {
         this.montantReduit = montantReduit;
     }
 
@@ -156,19 +158,55 @@ public class SecureTransactionMirror {
             repRest.setData(null);
             return repRest;
             
-        }else if (this.getMontantInitial().isNaN()||this.getMontantInitial()==null||this.getMontantReduit().isNaN()||this.getMontantReduit()==null){
-            repRest.setCode(Constantes.CODE_MONTANT_ERROR);
-            repRest.setMessage(" Montant not set, is empty or not valid");
+        }/*else if (this.getMontantInitial().isEmpty()||this.getMontantInitial()==null){
+            /*boolean numeric=true;
+            
+            try {
+                Double num1= Double.parseDouble(this.getMontantInitial());
+                //Double num2= Double.parseDouble(this.getMontantReduit().toString());
+                
+                
+            } catch (NumberFormatException e) {
+                numeric=false;
+                
+            }
+            if(!numeric){*/
+           /* repRest.setCode(Constantes.CODE_MONTANT_ERROR);
+            repRest.setMessage(" Montant not set, is empty ");
             repRest.setStatut(false);
             repRest.setData(null);
             return repRest;
-            
-        }else if(this.getLogin().isEmpty()||this.getLogin()==null ||this.getMotDePasse().isEmpty()||this.getMotDePasse()==null){
-          repRest.setCode(Constantes.CODE_LOGIN_OR_PASSWORD_NOT_SET);
+            }/*else if(!(this.getMontantInitial().isEmpty()||this.getMontantInitial()==null)) {
+                boolean numeric=true;
+                int controle=1;
+            while(controle==1){
+            try {
+                Double num1= Double.parseDouble(this.getMontantInitial());
+                //Double num2= Double.parseDouble(this.getMontantReduit().toString());
+                
+                
+            } catch (NumberFormatException e) {
+                numeric=false;
+                   
+            }
+            if(!numeric){
+                repRest.setCode(Constantes.CODE_MONTANT_ERROR);
+                repRest.setMessage(" Montant is not a number ");
+                repRest.setStatut(false);
+                repRest.setData(null);
+                return repRest; 
+            }else{
+                controle=0;
+                break;
+            }
+            }*/
+            //return repRest;
+        else if(this.getLogin().isEmpty()||this.getLogin()==null ||this.getMotDePasse().isEmpty()||this.getMotDePasse()==null){
+            repRest.setCode(Constantes.CODE_LOGIN_OR_PASSWORD_NOT_SET);
             repRest.setMessage("login or password  not set or is empty");
             repRest.setStatut(false);
             repRest.setData(null);
-            return repRest;
+            return repRest; 
             
         }else if(this.getHash().isEmpty()||this.getHash()==null){
           repRest.setCode(Constantes.CODE_HASH_NOT_SET);
@@ -176,14 +214,67 @@ public class SecureTransactionMirror {
             repRest.setStatut(false);
             repRest.setData(null);
             return repRest;   
-        }else{
-            repRest.setCode(Constantes.CODE_SUCCES);
+        }else if (this.getMontantInitial().isEmpty()||this.getMontantInitial()==null||this.getMontantReduit().isEmpty()||this.getMontantReduit()==null){
+            /*boolean numeric=true;
+            
+            try {
+                Double num1= Double.parseDouble(this.getMontantInitial());
+                //Double num2= Double.parseDouble(this.getMontantReduit().toString());
+                
+                
+            } catch (NumberFormatException e) {
+                numeric=false;
+                
+            }
+            if(!numeric){*/
+            repRest.setCode(Constantes.CODE_MONTANT_ERROR);
+            repRest.setMessage(" MontantInitial or MontantReduit not set or empty ");
+            repRest.setStatut(false);
+            repRest.setData(null);
+            return repRest;
+            }
+        
+        
+        else if(!((this.getMontantInitial().isEmpty()||this.getMontantInitial()==null)&&(this.getMontantReduit().isEmpty()||this.getMontantReduit()==null))) {
+                boolean numeric=true;
+                int controle=1;
+            while(controle==1){
+            try {
+                Double num1= Double.parseDouble(this.getMontantInitial());
+                Double num2= Double.parseDouble(this.getMontantReduit());
+                
+                
+            } catch (NumberFormatException e) {
+                numeric=false;
+                   
+            }
+            if(!numeric){
+                repRest.setCode(Constantes.CODE_MONTANT_ERROR);
+                repRest.setMessage(" MontantInitial or MontantReduit is not a number ");
+                repRest.setStatut(false);
+                repRest.setData(null);
+                return repRest; 
+            }else{
+                controle=0;
+                repRest.setCode(Constantes.CODE_SUCCES);
             repRest.setMessage("success");
             repRest.setStatut(true);
             repRest.setData(null);
             return repRest;
+               
+            }
+            }
+        }
+       
+        else{
+           /* repRest.setCode(Constantes.CODE_SUCCES);
+            repRest.setMessage("success");
+            repRest.setStatut(true);
+            repRest.setData(null);*/
+            return repRest;
         }  
             
+        return repRest;
         
         
         

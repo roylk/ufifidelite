@@ -31,7 +31,7 @@ public class RepConsultation  implements Serializable{
     
    
 
-    public int codeStatut() {
+    public int getCode() {
         return code;
     }
 
