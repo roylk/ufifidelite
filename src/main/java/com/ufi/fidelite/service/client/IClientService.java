@@ -56,6 +56,7 @@ public interface IClientService {
     public Page<UfTransaction> searchTranactions(String mc, Pageable pageable);
     public UfTransaction updateTransaction(UfTransaction transaction);
     public void deleteTransaction(String code);
+    public List<UfTransaction> findTransactionByAmount(Double montant, String carte);
     
     
     

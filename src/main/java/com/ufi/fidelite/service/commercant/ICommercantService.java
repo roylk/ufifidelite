@@ -112,6 +112,7 @@ public interface ICommercantService {
     public Reponse getAllPolitiqueEvaluation();
     public boolean searchExistsCom(String code);
     public boolean searchExistTerm(String code);
+    public List<Conversion> getConversionByCom(String commercant);
     
  
     

@@ -26,6 +26,8 @@ import com.ufi.fidelite.service.authentification.IAuthentificationService;
 
 import com.ufi.fidelite.service.client.IClientService;
 import com.ufi.fidelite.service.commercant.ICommercantService;
+import com.ufi.fidelite.service.fidelisation.IFidelisationService;
+import java.math.BigInteger;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -59,6 +61,9 @@ public class FidApiRestController {
 
     @Autowired
     private IAuthentificationService authentificationService;
+    
+    @Autowired
+    private IFidelisationService fidelisationService;
 
     @Autowired
     private Utils utilitaire;
@@ -115,6 +120,7 @@ public class FidApiRestController {
             }
              else {
                 config = commercant.getConfig();
+                reduction=fidelisationService.evaluationGain(c, montant);
                 montantReduit = montant - reduction;
                 return new RepConsultation(Constantes.CODE_SUCCES, true, "success",config, montant, montantReduit);}   
             }
@@ -158,6 +164,7 @@ public class FidApiRestController {
     ReponseRest infoTransaction(@RequestBody SecureTransactionMirror secureTrx ) {
         ReponseRest repRest = secureTrx.checkInput();
         if(repRest.isStatut()) {
+            //BigInteger test=BigInteger.TEN;
                 UfTerminal term = commercantService.searchTerminal(secureTrx.getTerminal());
              if (term==null){
                  return new ReponseRest(Constantes.CODE_TERMINAL_NOT_SET, false, "terminal non défini ou inexistant", null);
@@ -174,14 +181,16 @@ public class FidApiRestController {
               String hashRep = Utils.sha1(input);
               if (comFromTerm.getCode().equals(comFromUser.getCode())) {
                  UfCarte c=clientService.searchCarte(secureTrx.getCarte());
+                 System.out.println(input+"=============="+hashRep);
                  boolean existsAuth = authentificationService.searchExistsUser(secureTrx.getLogin(), secureTrx.getMotDePasse());
                 if (!existsAuth) {
                     return new ReponseRest(Constantes.CODE_AUTHENTIFICATION_ERROR, false, "erreur d'authentification", null);
                 } else {
                     boolean integrity = secureTrx.getHash().equals(hashRep);
                   if (!integrity) {
+                      //System.out.println("test= "+test);
                     return new ReponseRest(Constantes.CODE_DATA_INTEGRITY_ERROR, false,  "données reçues douteuses", null);
-                  } else {
+                  } else {  
                     UfTransaction trx = new UfTransaction();
                     trx.setTransactionId(secureTrx.getTransactionId());
                     trx.setDateTransaction(secureTrx.getDateTransaction());
@@ -220,6 +229,8 @@ public class FidApiRestController {
                     } else {
                         trx = clientService.saveTransaction(trx);
                         if (trx != null) {
+                            //if(trx.getMontantReduit()<trx.getMontantInitial())
+                            fidelisationService.upDateCompteurs(trx);
                             return new ReponseRest(Constantes.CODE_SUCCES,true, "Enregistré avec succes", trx);
                         } else {
                             return new ReponseRest(Constantes.CODE_ERREUR_INITIALISATION, false, "Une erreur s'est produite pendant l'enregistrement", null);
@@ -276,6 +287,8 @@ public class FidApiRestController {
     }
 
     public FidApiRestController() {
+        
+        
     }
 
 }

@@ -6,8 +6,10 @@
 package com.ufi.fidelite.dao;
 
 import com.ufi.fidelite.entities.Conversion;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  *
@@ -17,5 +19,8 @@ public interface ConversionRepository extends JpaRepository<Conversion, Integer>
     
     @Query("SELECT c FROM Conversion c WHERE c.id = :id")
     Conversion findByIdConversion(Integer id);
+    
+     @Query("SELECT c FROM Conversion c WHERE c.commercant.code = :x")
+      List<Conversion> getConversionByCom(@Param("x")String commercant);
     
 }

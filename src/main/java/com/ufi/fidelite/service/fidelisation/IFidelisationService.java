@@ -6,8 +6,10 @@
 package com.ufi.fidelite.service.fidelisation;
 
 import com.ufi.fidelite.dao.Reponse;
+import com.ufi.fidelite.entities.UfCarte;
 import com.ufi.fidelite.entities.UfOffre;
 import com.ufi.fidelite.entities.UfPalier;
+import com.ufi.fidelite.entities.UfTransaction;
 import com.ufi.fidelite.entities.UfTypeOffre;
 import com.ufi.fidelite.service.*;
 import java.util.List;
@@ -47,6 +49,10 @@ public interface IFidelisationService {
    public Reponse getAllOffre();
    public Reponse getAllTypeOffre();
    public Reponse getAllPallier();
+   public void upDateCompteurs(UfTransaction transaction);
+   public Double evaluateTransaction(Double montant, String carte);
+   public Double evaluationGain(UfCarte carte,Double montant);
+   
    
    
     

@@ -16,6 +16,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -163,6 +164,7 @@ public class ClientServiceImpl implements IClientService{
     @Override
     public void deleteTransaction(String code) {
         transactionRepository.deleteById(code);
+       
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -193,6 +195,15 @@ public class ClientServiceImpl implements IClientService{
     @Override
     public boolean searchExistTrx(String code) {
         return transactionRepository.existsById(code);
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<UfTransaction> findTransactionByAmount(Double montant, String carte) {
+        //transactionRepository.findAll(Sort.by(Sort.Direction.DESC, "montantInitial"));
+        return transactionRepository.findAllByAmount(montant, carte);
+       
+        
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

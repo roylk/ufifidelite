@@ -352,6 +352,13 @@ public class CommercantServiceImpl implements ICommercantService{
         return new Reponse(1,"liste des conversions", conversionRepository.findAll(pageable));
        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public List<Conversion> getConversionByCom(String commercant) {
+        return conversionRepository.getConversionByCom(commercant);
+        
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     
     
