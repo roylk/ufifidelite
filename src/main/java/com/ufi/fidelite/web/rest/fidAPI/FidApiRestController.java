@@ -267,7 +267,14 @@ public class FidApiRestController {
                  if(login.isEmpty()||motDePasse.isEmpty()){
                      return new ReponseRest(Constantes.CODE_LOGIN_OR_PASSWORD_NOT_SET, false, "login et/ou motDePasse non défini(s)", null);
                  }else{
-                     UfCommercant comFromUser = authentificationService.searchUserByLogin(login).getCommercant();
+                     UfUtilisateur user=authentificationService.searchUserByLogin(login);
+                     //UfCommercant comFromUser = authentificationService.searchUserByLogin(login).getCommercant();
+                     if(user==null){
+                         return new ReponseRest(Constantes.CODE_USER_LOGIN_NOT_EXIST, false, "utilisateur inexistant", null);
+                     }else{
+                     //UfCommercant comFromUser = authentificationService.searchUserByLogin(login).getCommercant();
+                     UfCommercant comFromUser = user.getCommercant();
+                     
                      if (comFromTerm.getCode().equals(comFromUser.getCode())) {
                             boolean exists = authentificationService.searchExistsUser(login, motDePasse);
                             if (exists) {
@@ -279,7 +286,7 @@ public class FidApiRestController {
                          return new ReponseRest(Constantes.CODE_MERCHAND_TERMINAL_MATCH_ERROR, false, "erreur de correspondance terminal", null);
                     }
                  }
-                     
+            }    
              }
                 
             }
