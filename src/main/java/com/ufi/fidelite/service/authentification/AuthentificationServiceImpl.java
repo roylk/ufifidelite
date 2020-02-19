@@ -5,12 +5,17 @@
  */
 package com.ufi.fidelite.service.authentification;
 
+import com.ufi.fidelite.dao.Reponse;
 import com.ufi.fidelite.dao.UfCarteRepository;
 import com.ufi.fidelite.dao.UfClientRepository;
+import com.ufi.fidelite.dao.UfRoleRepository;
 import com.ufi.fidelite.dao.UfTransactionRepository;
 import com.ufi.fidelite.dao.UfUtilisateurRepository;
+import com.ufi.fidelite.entities.UfRole;
 import com.ufi.fidelite.entities.UfUtilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +42,9 @@ public class AuthentificationServiceImpl implements IAuthentificationService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @Autowired 
+    private UfRoleRepository roleRepository;
 
     @Override
     public boolean searchExistsUser(String login, String motDePasse) {
@@ -83,5 +91,58 @@ public class AuthentificationServiceImpl implements IAuthentificationService {
         return passwordEncoder.encode(input);
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public UfUtilisateur saveUser(UfUtilisateur utilisateur) {
+        return utilisateurRepository.save(utilisateur);
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Reponse getAllUsers() {
+         return new Reponse(1, "liste des utilisateurs", utilisateurRepository.findAll());
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Page<UfUtilisateur> listeUser(Pageable pageable) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Reponse getAllUserPages(Pageable pageable) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public UfRole getOneRole(Integer id) {
+        return roleRepository.getOne(id);
+       //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean searchExistLogin(String login) {
+        UfUtilisateur user=utilisateurRepository.findbyLogin(login);
+        if (user != null){
+            return true;
+        }else{
+            return false;
+        }
+        
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean searchExistEmail(String email) {
+         UfUtilisateur user=utilisateurRepository.findbyEmail(email);
+        if (user != null){
+            return true;
+        }else{
+            return false;
+        }
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
 
 }

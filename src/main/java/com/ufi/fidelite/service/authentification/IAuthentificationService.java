@@ -5,7 +5,11 @@
  */
 package com.ufi.fidelite.service.authentification;
 
+import com.ufi.fidelite.dao.Reponse;
+import com.ufi.fidelite.entities.UfRole;
 import com.ufi.fidelite.entities.UfUtilisateur;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  *
@@ -17,7 +21,23 @@ public interface IAuthentificationService {
     
     public boolean searchExistUserByString(String code);
     
+    public boolean searchExistLogin(String login);
+    
+    public boolean searchExistEmail(String email);
+    
+    
+    
     public UfUtilisateur searchUserByLogin(String code);
+    
+    public UfUtilisateur saveUser(UfUtilisateur utilisateur);
+    public Reponse getAllUsers();
+    public Page<UfUtilisateur> listeUser (Pageable pageable);
+    public Reponse getAllUserPages(Pageable pageable);
+    
+    
+    public UfRole getOneRole(Integer id);
+    
+    
     
     public String stringToBcrypt(String input);
     

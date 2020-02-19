@@ -18,5 +18,9 @@ public interface UfUtilisateurRepository extends JpaRepository<UfUtilisateur, St
     
      @Query("select u from UfUtilisateur u where u.login=:x")
 	public UfUtilisateur findbyLogin(@Param("x") String code);
+        
+        
+     @Query("select u from UfUtilisateur u where u.email=:x")
+	public UfUtilisateur findbyEmail(@Param("x") String code);
     
 }
