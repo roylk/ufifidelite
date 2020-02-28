@@ -8,9 +8,11 @@ package com.ufi.fidelite.service.authentification;
 import com.ufi.fidelite.dao.Reponse;
 import com.ufi.fidelite.dao.UfCarteRepository;
 import com.ufi.fidelite.dao.UfClientRepository;
+import com.ufi.fidelite.dao.UfPrivilegeRepository;
 import com.ufi.fidelite.dao.UfRoleRepository;
 import com.ufi.fidelite.dao.UfTransactionRepository;
 import com.ufi.fidelite.dao.UfUtilisateurRepository;
+import com.ufi.fidelite.entities.UfPrivilege;
 import com.ufi.fidelite.entities.UfRole;
 import com.ufi.fidelite.entities.UfUtilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,9 @@ public class AuthentificationServiceImpl implements IAuthentificationService {
     
     @Autowired 
     private UfRoleRepository roleRepository;
+    
+     @Autowired 
+    private UfPrivilegeRepository privilegeRepository;
 
     @Override
     public boolean searchExistsUser(String login, String motDePasse) {
@@ -140,6 +145,71 @@ public class AuthentificationServiceImpl implements IAuthentificationService {
         }else{
             return false;
         }
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public UfRole saveRole(UfRole role) {
+        return roleRepository.save(role);
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Reponse getAllRoles() {
+         return new Reponse(1, "liste des roles", roleRepository.findAll());
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean searchExistsRole(String libele) {
+         UfRole role=roleRepository.getOneByCode(libele);
+        if (role != null){
+            return true;
+        }else{
+            return false;
+        }
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public UfPrivilege savePrivilege(UfPrivilege privilege) {
+        return privilegeRepository.save(privilege);
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public UfPrivilege getOnePrivilege(String code) {
+        return privilegeRepository.getOne(code);
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Reponse getAllPrivilege() {
+        return new Reponse(1, "liste des privilèges", privilegeRepository.findAll());
+       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean searchExistsPrivilege(String code) {
+        return privilegeRepository.existsById(code);
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public UfUtilisateur updateUser(UfUtilisateur user) {
+        return utilisateurRepository.saveAndFlush(user);
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public UfRole updateRole(UfRole role) {
+        return roleRepository.saveAndFlush(role);
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public UfPrivilege updatePrivilege(UfPrivilege privilege) {
+        return privilegeRepository.saveAndFlush(privilege);
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

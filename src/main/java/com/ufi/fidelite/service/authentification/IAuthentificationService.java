@@ -6,6 +6,7 @@
 package com.ufi.fidelite.service.authentification;
 
 import com.ufi.fidelite.dao.Reponse;
+import com.ufi.fidelite.entities.UfPrivilege;
 import com.ufi.fidelite.entities.UfRole;
 import com.ufi.fidelite.entities.UfUtilisateur;
 import org.springframework.data.domain.Page;
@@ -34,8 +35,19 @@ public interface IAuthentificationService {
     public Page<UfUtilisateur> listeUser (Pageable pageable);
     public Reponse getAllUserPages(Pageable pageable);
     
-    
+    public UfRole saveRole(UfRole role);
     public UfRole getOneRole(Integer id);
+    public Reponse getAllRoles();
+    public boolean searchExistsRole(String libele);
+    
+    public UfPrivilege savePrivilege(UfPrivilege privilege);
+    public UfPrivilege getOnePrivilege(String code);
+    public Reponse getAllPrivilege();
+    public boolean searchExistsPrivilege(String code);
+    
+    public UfUtilisateur updateUser(UfUtilisateur user);
+    public UfRole updateRole(UfRole role);
+    public UfPrivilege updatePrivilege(UfPrivilege privilege);  
     
     
     

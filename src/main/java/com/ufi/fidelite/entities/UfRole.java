@@ -15,6 +15,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
@@ -56,10 +58,14 @@ public class UfRole implements Serializable {
     //@Size(max = 16777215)
     @Column(length = 16777215)
     private String description;
-    @ManyToMany(mappedBy = "ufRoleList", fetch = FetchType.LAZY)
+    @JoinTable(name = "uf_role_privilege", joinColumns = {
+        @JoinColumn(name = "role", referencedColumnName = "id", nullable = false)}, inverseJoinColumns = {
+        @JoinColumn(name = "privilege", referencedColumnName = "code", nullable = false)})
+    @ManyToMany(fetch = FetchType.LAZY)
+//    @ManyToMany(mappedBy = "ufRoleList", fetch = FetchType.LAZY)
     private List<UfPrivilege> ufPrivilegeList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "role", fetch = FetchType.LAZY)
-    private List<UfUtilisateur> ufUtilisateurList;
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "role", fetch = FetchType.LAZY)
+//    private List<UfUtilisateur> ufUtilisateurList;
 
     public UfRole() {
     }
@@ -106,14 +112,14 @@ public class UfRole implements Serializable {
         this.ufPrivilegeList = ufPrivilegeList;
     }
 
-    @XmlTransient
-    public List<UfUtilisateur> getUfUtilisateurList() {
-        return ufUtilisateurList;
-    }
-
-    public void setUfUtilisateurList(List<UfUtilisateur> ufUtilisateurList) {
-        this.ufUtilisateurList = ufUtilisateurList;
-    }
+//    @XmlTransient
+//    public List<UfUtilisateur> getUfUtilisateurList() {
+//        return ufUtilisateurList;
+//    }
+//
+//    public void setUfUtilisateurList(List<UfUtilisateur> ufUtilisateurList) {
+//        this.ufUtilisateurList = ufUtilisateurList;
+//    }
 
     @Override
     public int hashCode() {

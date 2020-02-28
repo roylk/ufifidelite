@@ -49,11 +49,12 @@ public class UfPrivilege implements Serializable {
     //@Size(max = 16777215)
     @Column(length = 16777215)
     private String description;
-    @JoinTable(name = "uf_role_privilege", joinColumns = {
-        @JoinColumn(name = "privilege", referencedColumnName = "code", nullable = false)}, inverseJoinColumns = {
-        @JoinColumn(name = "role", referencedColumnName = "id", nullable = false)})
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<UfRole> ufRoleList;
+//    @JoinTable(name = "uf_role_privilege", joinColumns = {
+//        @JoinColumn(name = "privilege", referencedColumnName = "code", nullable = false)}, inverseJoinColumns = {
+//        @JoinColumn(name = "role", referencedColumnName = "id", nullable = false)})
+//   @ManyToMany(fetch = FetchType.LAZY)
+//   @ManyToMany(mappedBy = "ufPrivilegeList", fetch = FetchType.LAZY)
+//    private List<UfRole> ufRoleList;
 
     public UfPrivilege() {
     }
@@ -78,14 +79,14 @@ public class UfPrivilege implements Serializable {
         this.description = description;
     }
 
-    @XmlTransient
-    public List<UfRole> getUfRoleList() {
-        return ufRoleList;
-    }
-
-    public void setUfRoleList(List<UfRole> ufRoleList) {
-        this.ufRoleList = ufRoleList;
-    }
+//    @XmlTransient
+//    public List<UfRole> getUfRoleList() {
+//        return ufRoleList;
+//    }
+//
+//    public void setUfRoleList(List<UfRole> ufRoleList) {
+//        this.ufRoleList = ufRoleList;
+//    }
 
     @Override
     public int hashCode() {
