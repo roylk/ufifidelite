@@ -195,14 +195,14 @@ public class AuthentificationRestController {
             user.setStatut(u.getStatut());
             user.setCommercant(commercantService.searchCommercant(u.getCommercant()));
             user.setRole(authentificationService.getOneRole(u.getRole()));
-            boolean exists1=authentificationService.searchExistLogin(u.getLogin());
-            boolean exists2=authentificationService.searchExistEmail(u.getEmail());
-             if(exists1){
-                        return new Reponse(3, "Login déjà utilisé...", null);
-              }else if(exists2){
-                        return new Reponse(2, "Email  déjà utilisé...", null);   
-              }else{
-                     user= authentificationService.updateUser(user);}
+//            boolean exists1=authentificationService.searchExistLogin(u.getLogin());
+//            boolean exists2=authentificationService.searchExistEmail(u.getEmail());
+//             if(exists1){
+//                        return new Reponse(3, "Login déjà utilisé...", null);
+//              }else if(exists2){
+//                        return new Reponse(2, "Email  déjà utilisé...", null);   
+//              }else{
+                     user= authentificationService.updateUser(user);
                             if(user!=null){
                                 return new Reponse(1, "Mis à  avec succes", user);}
                             else {
