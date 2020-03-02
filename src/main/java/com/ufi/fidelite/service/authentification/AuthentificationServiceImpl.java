@@ -80,8 +80,8 @@ public class AuthentificationServiceImpl implements IAuthentificationService {
     }
 
     @Override
-    public boolean searchExistUserByString(String code) {
-        return utilisateurRepository.existsById(code);
+    public boolean searchExistUserById(Integer id) {
+        return utilisateurRepository.existsById(id);
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -211,6 +211,24 @@ public class AuthentificationServiceImpl implements IAuthentificationService {
     public UfPrivilege updatePrivilege(UfPrivilege privilege) {
         return privilegeRepository.saveAndFlush(privilege);
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteUser(Integer id) {
+        utilisateurRepository.deleteById(id);
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteRole(Integer id) {
+        roleRepository.deleteById(id);
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deletePrivilege(String code) {
+        privilegeRepository.deleteById(code);
+        //throw new UnsupportedOperationException("Not supported yet.");  //To change body of generated methods, choose Tools | Templates.
     }
     
     

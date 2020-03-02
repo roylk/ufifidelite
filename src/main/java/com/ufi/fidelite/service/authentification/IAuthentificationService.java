@@ -20,7 +20,7 @@ public interface IAuthentificationService {
     
     public boolean searchExistsUser(String login, String motDePasse);
     
-    public boolean searchExistUserByString(String code);
+    public boolean searchExistUserById(Integer id);
     
     public boolean searchExistLogin(String login);
     
@@ -47,10 +47,12 @@ public interface IAuthentificationService {
     
     public UfUtilisateur updateUser(UfUtilisateur user);
     public UfRole updateRole(UfRole role);
-    public UfPrivilege updatePrivilege(UfPrivilege privilege);  
+    public UfPrivilege updatePrivilege(UfPrivilege privilege); 
     
-    
-    
+    public void deleteUser(Integer id);
+    public void deleteRole(Integer id);
+    public void deletePrivilege(String code);
+     
     public String stringToBcrypt(String input);
     
     

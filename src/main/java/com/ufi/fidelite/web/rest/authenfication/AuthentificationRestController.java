@@ -247,6 +247,24 @@ public class AuthentificationRestController {
             
         }
         
+         @RequestMapping(value = "/utilisateurs/{id}", method = RequestMethod.DELETE)
+	public void deleteUser(@PathVariable("id") Integer id) {
+		authentificationService.deleteUser(id);
+	}
+        
+         @RequestMapping(value = "/roles/{id}", method = RequestMethod.DELETE)
+	public void deleteRole(@PathVariable("id") Integer id) {
+		authentificationService.deleteRole(id);
+	}
+        
+         @RequestMapping(value = "/privileges/{code}", method = RequestMethod.DELETE)
+	public void deletePrivilege(@PathVariable("code") String code) {
+		authentificationService.deletePrivilege(code);
+	}
+        
+        
+        
+        
 
  
     public AuthentificationRestController() {

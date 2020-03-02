@@ -14,7 +14,7 @@ import org.springframework.data.repository.query.Param;
  *
  * @author R. KOUANI
  */
-public interface UfUtilisateurRepository extends JpaRepository<UfUtilisateur, String> {
+public interface UfUtilisateurRepository extends JpaRepository<UfUtilisateur, Integer> {
     
      @Query("select u from UfUtilisateur u where u.login=:x")
 	public UfUtilisateur findbyLogin(@Param("x") String code);
