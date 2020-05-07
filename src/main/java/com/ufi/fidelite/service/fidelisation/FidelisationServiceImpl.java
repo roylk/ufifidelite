@@ -20,6 +20,8 @@ import com.ufi.fidelite.entities.UfTypeOffre;
 import com.ufi.fidelite.service.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -182,6 +184,9 @@ public class FidelisationServiceImpl implements IFidelisationService {
 
     @Override
     public void upDateCompteurs(UfTransaction transaction) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date currentDate =new Date();
+        short statut=2;
         int control=1;
         while(transaction.getMontantReduit()<transaction.getMontantInitial()&&control==1){
             transaction.getCarte().setCompteurPoint(BigInteger.ZERO);
@@ -196,7 +201,13 @@ public class FidelisationServiceImpl implements IFidelisationService {
         BigInteger pointsGagnes=BigInteger.ZERO;
         BigInteger  compteurPoints=BigInteger.ZERO;
         for(UfPalier palier :listePaliers){
+            int ctrl_offre=1;
+            while(palier.getOffre().getDateFin().before(currentDate)&& ctrl_offre==1){ 
+                    palier.getOffre().setStatut(statut);
+                    ctrl_offre=0;
+                }
             if(transaction.getCarte().getCategorieCarte().getCode().equals(palier.getOffre().getCategorieCarte().getCode())){
+                
                if(transaction.getMontantInitial()>=palier.getMontantInf()&&transaction.getMontantInitial()<=palier.getMontantSup()&&palier.getOffre().getTypeOffre().getCode().equals("ACHT001")
                        &&palier.getOffre().getOrientation()==1&&palier.getOffre().getStatut()==1){
                    pointsGagnes=BigDecimal.valueOf((transaction.getMontantInitial()*palier.getUnitePoint())/palier.getUniteDevise()).toBigInteger();      
@@ -276,7 +287,7 @@ public class FidelisationServiceImpl implements IFidelisationService {
                                 break;
                         }    
                     }else{
-                        reduction=0.0;
+                        reduction=0.0; 
                     }
                     
                 }   

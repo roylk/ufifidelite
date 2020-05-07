@@ -181,6 +181,7 @@ public class ClientRestController {
             public Reponse saveCarte(@RequestBody CarteMirror carteM ) {
             
              UfCarte carte = new UfCarte();
+             short disponible=1, vendu=2;
             
             carte.setNumero(carteM.getNumero());
             carte.setCompteurPoint(carteM.getCompteurPoint());
@@ -188,11 +189,13 @@ public class ClientRestController {
             carte.setMontantAcumule(carteM.getMontantAcumule());
             carte.setStatut(carteM.getStatut());
             carte.setCategorieCarte(commercantService.searchCategorieCarte(carteM.getCategorieCarte()));
-            if(carteM.getClient()==null)
-                carte= clientService.saveCarte(carte); 
+            if(carteM.getClient()==null){
+                //carte.setStatut(disponible);
+                carte= clientService.saveCarte(carte);}
             else{
                 //carte.setClient(null);
                 carte.setClient(clientService.searchClient(carteM.getClient()));
+                carte.setStatut(vendu);
             
             //return  commercantService.saveCommercant(commercant);
                 carte= clientService.saveCarte(carte); }

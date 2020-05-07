@@ -14,6 +14,7 @@ import com.ufi.fidelite.entities.mirrors.UtilisateurMirror;
 import com.ufi.fidelite.service.authentification.IAuthentificationService;
 import com.ufi.fidelite.service.commercant.ICommercantService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,7 +63,8 @@ public class AuthentificationRestController {
     Reponse connexion(@RequestBody ConnexionMirror connexionObject) {
             boolean exists = authentificationService.searchExistsUser(connexionObject.getLogin(), connexionObject.getMotDePasse());
             if (exists) {
-                return new Reponse(1, "auth réussie", null);
+                UfUtilisateur user=authentificationService.searchUserByLogin(connexionObject.getLogin());
+                return new Reponse(1, "auth réussie", user);
             } else {
                 return new Reponse(0, "echec auth", null);
             }
@@ -113,6 +115,21 @@ public class AuthentificationRestController {
                 rep.setMessage(e.getMessage());
             }
             return rep;	
+	}
+        
+        @RequestMapping(value = "/putilisateursR", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Reponse getAllUsersP( @RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "5") int size) {
+             Reponse rep=null; 
+            try{
+               rep=authentificationService.getAllUserPages(new PageRequest(page, size));
+            }catch(Exception e){
+                rep =new Reponse();
+                rep.setStatus(0);
+                rep.setMessage(e.getMessage());
+            }
+            return rep;	
+		//return fidelisationService.listeOffre(new PageRequest(page, size));       
 	}
         
         
@@ -179,7 +196,7 @@ public class AuthentificationRestController {
 	}
         
         @RequestMapping(value = "/utilisateurs/{id}", method = RequestMethod.PUT , produces = MediaType.APPLICATION_JSON_VALUE)
-	public Reponse updateRegion(@RequestBody UtilisateurMirror u, @PathVariable("id") Integer id) {
+	public Reponse updateUser(@RequestBody UtilisateurMirror u, @PathVariable("id") Integer id) {
             
             UfUtilisateur user = new UfUtilisateur();
             

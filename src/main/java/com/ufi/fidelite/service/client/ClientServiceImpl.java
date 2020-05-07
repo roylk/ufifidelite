@@ -188,7 +188,7 @@ public class ClientServiceImpl implements IClientService{
 
     @Override
     public Reponse getAllTransaction() {
-        return new Reponse(1, "liste Transactions", transactionRepository.findAll());
+        return new Reponse(1, "liste Transactions", transactionRepository.findAll(Sort.by(Sort.Direction.DESC, "dateTransaction")));
        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
