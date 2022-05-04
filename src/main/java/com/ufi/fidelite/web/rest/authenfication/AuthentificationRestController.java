@@ -41,8 +41,8 @@ public class AuthentificationRestController {
     private ICommercantService commercantService;
      
      
-       @RequestMapping(value = "/convertToBcrypt", method = RequestMethod.GET)
-     public String convertToBcrypt(String input){
+       @RequestMapping(value = "/convertToBcrypt", method = RequestMethod.POST)
+     public String convertToBcrypt(@RequestParam(name="input")String input){
          String output;
          return output = authentificationService.stringToBcrypt(input);
          
